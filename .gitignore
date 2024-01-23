@@ -4,3 +4,4 @@
 .vscode
 .prettierrc
 *.code-workspace
+*.js

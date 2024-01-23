@@ -4,14 +4,25 @@ use rustle::compiler::analyse::analyse;
 use rustle::compiler::generate::generate;
 use rustle::compiler::parse::Parser;
 
-#[test]
-fn test_parsing() {
-    let source = fs::read_to_string("tests/app.rustle").unwrap();
+fn test_parsing(path: String) {
+    let source = fs::read_to_string(format!("tests/{}/app.rustle", path)).unwrap();
     let ast = Parser::new(&source).parse();
     let analysis = analyse(&ast);
     let generated = generate(ast, analysis);
 
-    fs::write("tests/app.js", generated).unwrap();
+    fs::write(format!("tests/{}/app.js", path), generated).unwrap();
 
     assert!(true)
 }
+
+
+#[test]
+fn test_parsing_demo() { test_parsing("demo".to_owned()) }
+
+
+#[test]
+fn test_parsing_hello() { test_parsing("hello".to_owned()) }
+
+
+#[test]
+fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }

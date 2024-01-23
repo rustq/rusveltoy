@@ -1,5 +1,5 @@
-# rustle
-The Svelte compiler, rewritten in Rust.
+# rusveltoy
+The Svelte compiler, rewritten in Rust, but just toy.
 
 ## Reasons
 My main reason for doing this, is to compile `Svelte` without `Node.js` and possibly use `Deno` instead.
