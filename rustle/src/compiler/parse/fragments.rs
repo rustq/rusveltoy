@@ -98,6 +98,18 @@ fn parse_element(parser: &mut Parser) -> Option<RustleElement> {
 
         let tag_name = parser.read_while_matching(&ELEMENT_TAG_NAME);
         let attributes = parse_attribute_list(parser);
+
+        if parser.match_str("/>") {
+            parser.eat("/>");
+
+            let element = Some(RustleElement {
+                name: tag_name,
+                attributes: attributes,
+                fragments: vec![],
+            });
+            return element;
+        }
+
         parser.eat(">");
 
         let end_tag = format!("</{}>", tag_name);
@@ -151,7 +163,7 @@ fn parse_attribute_list(parser: &mut Parser) -> Vec<RustleAttribute> {
     let mut attributes = Vec::new();
     parser.skip_whitespace();
 
-    while !parser.match_str(">") {
+    while !parser.match_str(">") && !parser.match_str("/>") {
         attributes.push(parse_attribute(parser));
         parser.skip_whitespace();
     }
