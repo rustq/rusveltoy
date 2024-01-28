@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_analyse() {
-        let source = fs::read_to_string("./tests/app.rustle").unwrap();
+        let source = fs::read_to_string("./tests/demo/app.rustle").unwrap();
         let ast = Parser::new(&source).parse();
         let result = analyse(&ast);
     }

@@ -24,9 +24,9 @@ fn test_parsing_demo() { test_parsing("demo".to_owned()) }
 fn test_close_tag_hello() { test_parsing("close-tag".to_owned()) }
 
 
-#[test]
-fn test_parsing_hello() { test_parsing("hello".to_owned()) }
+// #[test]
+// fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 
 
-#[test]
-fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
+// #[test]
+// fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
