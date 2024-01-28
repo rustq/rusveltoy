@@ -21,7 +21,11 @@ fn test_parsing_demo() { test_parsing("demo".to_owned()) }
 
 
 #[test]
-fn test_close_tag_hello() { test_parsing("close-tag".to_owned()) }
+fn test_close_tag() { test_parsing("close-tag".to_owned()) }
+
+
+#[test]
+fn test_attribute() { test_parsing("attribute".to_owned()) }
 
 
 // #[test]

@@ -1,6 +1,6 @@
 use super::{analyse::AnalysisResult, Fragment, RustleAst};
 use swc_common::{sync::Lrc, SourceMap};
-use swc_ecma_ast::{EsVersion, Expr};
+use swc_ecma_ast::{EsVersion, Expr, Lit};
 use swc_ecma_codegen::{text_writer::JsWriter, Config, Emitter};
 
 struct Code {
@@ -105,6 +105,16 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                     code.destroy.push(format!(
                         "{}.removeEventListener('{}', {});",
                         parent, event_name, event_handler
+                    ));
+                } else {
+                    let value = match &attr.value {
+                        Expr::Ident(ident) => ident.sym.to_string(),
+                        Expr::Lit(Lit::Str(str)) => format!("\"{}\"", str.value),
+                        _ => panic!(),
+                    };
+                    code.create.push(format!(
+                        "{}.{} = {};",
+                        parent, attr.name, value
                     ));
                 }
             }
