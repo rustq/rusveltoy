@@ -28,6 +28,10 @@ fn test_close_tag() { test_parsing("close-tag".to_owned()) }
 fn test_attribute() { test_parsing("attribute".to_owned()) }
 
 
+#[test]
+fn test_attribute_expr() { test_parsing("attribute_expr".to_owned()) }
+
+
 // #[test]
 // fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 

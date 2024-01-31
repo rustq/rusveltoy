@@ -1,7 +1,7 @@
 use super::{analyse::AnalysisResult, Fragment, RustleAst};
 use swc_common::{sync::Lrc, SourceMap};
 use swc_ecma_ast::{EsVersion, Expr, Lit};
-use swc_ecma_codegen::{text_writer::JsWriter, Config, Emitter};
+use swc_ecma_codegen::{text_writer::JsWriter, Config, Emitter, Node};
 
 struct Code {
     counter: usize,
@@ -110,7 +110,32 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                     let value = match &attr.value {
                         Expr::Ident(ident) => ident.sym.to_string(),
                         Expr::Lit(Lit::Str(str)) => format!("\"{}\"", str.value),
-                        _ => panic!(),
+                        expr => {
+                            let mut buffer = Vec::new();
+                            {
+                                let cm: Lrc<SourceMap> = Default::default();
+                                let writer = JsWriter::new(cm.clone(), "\n", &mut buffer, None);
+                                let config = Config {
+                                    target: EsVersion::latest(),
+                                    ascii_only: false,
+                                    minify: false,
+                                    omit_last_semi: false,
+                                };
+                                let mut emmiter = Emitter {
+                                    cfg: config,
+                                    cm: cm.clone(),
+                                    comments: None,
+                                    wr: writer,
+                                };
+                                Node::emit_with(&expr, &mut emmiter).unwrap();
+                            }
+                        
+                            let expr_literal = String::from_utf8(buffer).unwrap();
+                            expr_literal
+                        },
+                        _ => {
+                            todo!()
+                        },
                     };
                     code.create.push(format!(
                         "{}.{} = {};",
