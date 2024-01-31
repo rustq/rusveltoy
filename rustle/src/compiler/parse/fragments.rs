@@ -174,6 +174,20 @@ fn parse_attribute_list(parser: &mut Parser) -> Vec<RustleAttribute> {
 /// Gets the attribute name and the expression between curly braces
 /// `on:click={action}` -> `on:click`, `action`
 fn parse_attribute(parser: &mut Parser) -> RustleAttribute {
+
+    // parse for attribute self case
+    if parser.match_str("{") {
+        parser.eat("{");
+        let value = parse_javascript(parser);
+        parser.eat("}");
+        match value {
+            Expr::Ident(ref ident) => {
+                return RustleAttribute { name: ident.sym.to_string(), value }
+            },
+            _ => panic!()
+        }
+    }
+
     let name = parser.read_while_matching(&ATTRIBUTE_NAME);
 
     parser.eat("={");
