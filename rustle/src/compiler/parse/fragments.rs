@@ -190,13 +190,29 @@ fn parse_attribute(parser: &mut Parser) -> RustleAttribute {
 
     let name = parser.read_while_matching(&ATTRIBUTE_NAME);
 
-    parser.eat("={");
+    if parser.match_str("=\"") {
+        parser.eat("=\"");
+        parser.content.insert(parser.index, '`');
+        let mut indent = 1usize;
+        while parser.content.chars().nth(parser.index + indent).unwrap().to_string().as_str() != "\"" {
+            indent += 1;
+        }
+        parser.content.insert(parser.index + indent, '`');
 
-    let value = parse_javascript(parser);
+        let value = parse_javascript(parser);
 
-    parser.eat("}");
+        parser.eat("\"");
 
-    return RustleAttribute { name, value };
+        return RustleAttribute { name, value };
+    } else {
+        parser.eat("={");
+
+        let value = parse_javascript(parser);
+
+        parser.eat("}");
+        return RustleAttribute { name, value };
+    }
+
 }
 
 /// Parses javascript using SWC at the current index.

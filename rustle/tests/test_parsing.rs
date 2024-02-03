@@ -36,6 +36,11 @@ fn test_attribute_expr() { test_parsing("attribute_expr".to_owned()) }
 fn test_attribute_self() { test_parsing("attribute_self".to_owned()) }
 
 
+/// to fix
+#[test]
+fn test_attribute_template_string() { test_parsing("attribute_template_string".to_owned()) }
+
+
 // #[test]
 // fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 
