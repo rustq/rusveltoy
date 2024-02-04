@@ -96,6 +96,15 @@ fn parse_element(parser: &mut Parser) -> Option<RustleElement> {
     if parser.match_str("<") {
         parser.eat("<");
 
+        if parser.match_str("!--") {
+            parser.eat("!--");
+            while !Regex::new(r"-->").unwrap().is_match(&parser.content[parser.index..parser.index+3]) {
+                parser.index += 1;
+            }
+            parser.eat("-->");
+            return None;
+        }
+
         let tag_name = parser.read_while_matching(&ELEMENT_TAG_NAME);
         let attributes = parse_attribute_list(parser);
 
