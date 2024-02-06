@@ -110,7 +110,7 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                         parent, event_name, event_handler
                     ));
                 } else {
-                    let value = match &attr.value {
+                    let mut value = match &attr.value {
                         Expr::Ident(ident) => ident.sym.to_string(),
                         Expr::Lit(Lit::Str(str)) => format!("\"{}\"", str.value),
                         expr => expr_to_string(expr),
@@ -118,6 +118,25 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                             todo!()
                         },
                     };
+                    {
+                        // replace `{xx} xx` => `${xx} xx`
+                        let mut index = 0usize;
+                        while index < value.len() {
+                            if value.chars().nth(index).unwrap() == '{' {
+                                let mut next_pointer = index + 1;
+                                while next_pointer < value.len() {
+                                    if value.chars().nth(next_pointer).unwrap() == '}' {
+                                        // match
+                                        value.insert(index, '$');
+                                        next_pointer += 1;
+                                        index += 1;
+                                    }
+                                    next_pointer += 1;
+                                }
+                            }
+                            index += 1;
+                        }
+                    }
                     code.create.push(format!(
                         "{}.{} = {};",
                         parent, attr.name, value
