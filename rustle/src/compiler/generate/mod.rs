@@ -3,6 +3,9 @@ use swc_common::{sync::Lrc, SourceMap};
 use swc_ecma_ast::{EsVersion, Expr, Lit};
 use swc_ecma_codegen::{text_writer::JsWriter, Config, Emitter, Node};
 
+mod generate_helpers;
+use generate_helpers::expr_to_string;
+
 struct Code {
     counter: usize,
     variables: Vec<String>,
@@ -110,29 +113,7 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                     let value = match &attr.value {
                         Expr::Ident(ident) => ident.sym.to_string(),
                         Expr::Lit(Lit::Str(str)) => format!("\"{}\"", str.value),
-                        expr => {
-                            let mut buffer = Vec::new();
-                            {
-                                let cm: Lrc<SourceMap> = Default::default();
-                                let writer = JsWriter::new(cm.clone(), "\n", &mut buffer, None);
-                                let config = Config {
-                                    target: EsVersion::latest(),
-                                    ascii_only: false,
-                                    minify: false,
-                                    omit_last_semi: false,
-                                };
-                                let mut emmiter = Emitter {
-                                    cfg: config,
-                                    cm: cm.clone(),
-                                    comments: None,
-                                    wr: writer,
-                                };
-                                Node::emit_with(&expr, &mut emmiter).unwrap();
-                            }
-                        
-                            let expr_literal = String::from_utf8(buffer).unwrap();
-                            expr_literal
-                        },
+                        expr => expr_to_string(expr),
                         _ => {
                             todo!()
                         },
@@ -159,6 +140,7 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
 
             let expression_name = match f {
                 Expr::Ident(ident) => ident.sym.to_string(),
+                expr => expr_to_string(expr),
                 _ => panic!(),
             };
 
@@ -188,7 +170,7 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
 
             code.variables.push(variable_name.clone());
             code.create.push(format!(
-                "{} = document.createTextNode('{}');",
+                "{} = document.createTextNode(`{}`);",
                 variable_name.clone(),
                 f.data.to_string()
             ));

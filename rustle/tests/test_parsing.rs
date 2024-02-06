@@ -44,5 +44,5 @@ fn test_attribute_template_string() { test_parsing("attribute_template_string".t
 #[test]
 fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 
-// #[test]
-// fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
+#[test]
+fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
