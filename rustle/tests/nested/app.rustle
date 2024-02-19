@@ -1,0 +1,6 @@
+<script>
+	import Nested from './Nested.rustle';
+</script>
+
+<p>These styles...</p>
+<Nested />
