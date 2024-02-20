@@ -47,5 +47,5 @@ fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 #[test]
 fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
 
-// #[test]
-// fn test_parsing_nested() { test_parsing("nested".to_owned()) }
+#[test]
+fn test_parsing_nested() { test_parsing("nested".to_owned()) }

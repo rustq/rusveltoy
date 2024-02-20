@@ -10,6 +10,7 @@ use swc_ecma_ast::{Expr, Script};
 use swc_html_ast::Text;
 
 lazy_static! {
+    static ref COMPONENT_TAG_PREFIX: Regex = Regex::new("[A-Z]").unwrap();
     static ref ELEMENT_TAG_NAME: Regex = Regex::new("[a-z]").unwrap();
     static ref ATTRIBUTE_NAME: Regex = Regex::new("[^=]").unwrap();
     static ref READ_TEXT: Regex = Regex::new("[^<{]").unwrap();
@@ -105,7 +106,9 @@ fn parse_element(parser: &mut Parser) -> Option<RustleElement> {
             return None;
         }
 
+        let prefix = parser.read_while_matching(&COMPONENT_TAG_PREFIX);
         let tag_name = parser.read_while_matching(&ELEMENT_TAG_NAME);
+        let tag_name = format!("{}{}", prefix, tag_name);
         let attributes = parse_attribute_list(parser);
 
         if parser.match_str("/>") {

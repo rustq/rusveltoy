@@ -1,6 +1,5 @@
 <script>
-	import Nested from './Nested.rustle';
+	const Nested = require('./Nested.rustle');
 </script>
 
-<p>These styles...</p>
 <Nested />
