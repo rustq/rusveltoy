@@ -17,6 +17,7 @@ pub struct RustleAttribute {
 #[derive(Serialize)]
 pub struct RustleElement {
     pub name: String,
+    pub is_component: bool,
     pub attributes: Vec<RustleAttribute>,
     pub fragments: Vec<Fragment>,
 }

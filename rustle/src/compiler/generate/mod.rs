@@ -9,6 +9,7 @@ use generate_helpers::expr_to_string;
 struct Code {
     counter: usize,
     variables: Vec<String>,
+    components: Vec<(String, String)>,
     create: Vec<String>,
     update: Vec<String>,
     destroy: Vec<String>,
@@ -18,6 +19,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
     let mut code = Code {
         counter: 1,
         variables: Vec::new(),
+        components: Vec::new(),
         create: Vec::new(),
         update: Vec::new(),
         destroy: Vec::new(),
@@ -53,6 +55,8 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
 	export default function() {{
 		{}
 		{}
+		{}
+
 		const lifecycle = {{
 			create(target) {{
 				{}
@@ -73,6 +77,11 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
             .map(|v| format!("let {};", v))
             .collect::<Vec<String>>()
             .join("\n"),
+        code.components
+            .iter()
+            .map(|(v, component)| format!("let {} = new {}({{}});", v, component))
+            .collect::<Vec<String>>()
+            .join("\n"),
         code.create.join("\n"),
         code.update.join("\n"),
         code.destroy.join("\n")
@@ -86,11 +95,22 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
             let variable_name = format!("{}_{}", f.name, code.counter);
             code.counter += 1;
 
-            code.variables.push(variable_name.clone());
-            code.create.push(format!(
-                "{} = document.createElement('{}');",
-                variable_name, f.name
-            ));
+            match f.is_component {
+                false => {
+                    code.variables.push(variable_name.clone());
+                    code.create.push(format!(
+                        "{} = document.createElement('{}');",
+                        variable_name, f.name
+                    ));
+                },
+                true => {
+                    code.components.push((variable_name.clone(), f.name.clone()));
+                    code.create.push(format!(
+                        "create_component({}.$$.fragment);",
+                        variable_name.clone()
+                    ));
+                }
+            }
 
             for attr in &f.attributes {
                 if attr.name.starts_with("on:") {

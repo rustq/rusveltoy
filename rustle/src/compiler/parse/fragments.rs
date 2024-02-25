@@ -110,12 +110,14 @@ fn parse_element(parser: &mut Parser) -> Option<RustleElement> {
         let tag_name = parser.read_while_matching(&ELEMENT_TAG_NAME);
         let tag_name = format!("{}{}", prefix, tag_name);
         let attributes = parse_attribute_list(parser);
+        let is_component = prefix.len() > 0;
 
         if parser.match_str("/>") {
             parser.eat("/>");
 
             let element = Some(RustleElement {
                 name: tag_name,
+                is_component,
                 attributes: attributes,
                 fragments: vec![],
             });
@@ -128,6 +130,7 @@ fn parse_element(parser: &mut Parser) -> Option<RustleElement> {
 
         let element = Some(RustleElement {
             name: tag_name,
+            is_component,
             attributes: attributes,
             fragments: parse_fragments(parser, |parser| !parser.match_str(&end_tag)),
         });
