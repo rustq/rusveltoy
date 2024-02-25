@@ -168,10 +168,21 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                 traverse(fragment, variable_name.clone(), analysis, code);
             }
 
-            code.create
-                .push(format!("{}.appendChild({});", parent, variable_name));
-            code.destroy
-                .push(format!("{}.removeChild({});", parent, variable_name));
+            match f.is_component {
+                false => {
+                    code.create
+                    .push(format!("{}.appendChild({});", parent, variable_name));
+                    code.destroy
+                    .push(format!("{}.removeChild({});", parent, variable_name));
+                },
+                true => {
+                    code.create
+                    .push(format!("mount_component({});", variable_name));
+                    code.destroy
+                    .push(format!("destroy_component({});", variable_name));
+
+                }
+            }
         }
         Fragment::Expression(f) => {
             let variable_name = format!("txt_{}", code.counter);
