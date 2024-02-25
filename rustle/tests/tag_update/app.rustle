@@ -1,0 +1,7 @@
+<script>
+  let url = '/tutorial/image.gif';
+  const update_url = () => url--;
+</script>
+
+<button on:click={update_url} />
+<div>{url}</div>
