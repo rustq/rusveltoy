@@ -161,6 +161,17 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                         "{}.{} = {};",
                         parent, attr.name, value
                     ));
+
+                    if analysis.will_change.contains(&value) {
+                        code.update.push(format!(
+                            r#"
+                            if (changed.includes('{}')) {{
+                                {}.{} = {};
+                            }}
+                        "#,
+                            value, parent, attr.name, value
+                        ));
+                    }
                 }
             }
 

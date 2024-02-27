@@ -50,5 +50,5 @@ fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_
 #[test]
 fn test_parsing_nested() { test_parsing("nested".to_owned()) }
 
-// #[test]
-// fn test_tag_update() { test_parsing("tag_update".to_owned()) }
+#[test]
+fn test_tag_update() { test_parsing("tag_update".to_owned()) }

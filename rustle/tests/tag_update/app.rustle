@@ -5,3 +5,4 @@
 
 <button on:click={update_url} />
 <div>{url}</div>
+<div x={url} />
