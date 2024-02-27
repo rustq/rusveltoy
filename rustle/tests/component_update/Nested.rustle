@@ -1,0 +1,5 @@
+<script>
+	export let q;
+</script>
+
+<p>...don't affect this element {q}</p>

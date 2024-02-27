@@ -1,0 +1,9 @@
+<script>
+  let url = '/tutorial/image.gif';
+  const update_url = () => url--;
+
+	const Nested = require('./Nested.rustle');
+</script>
+
+<button on:click={update_url} />
+<Nested q={url} />
