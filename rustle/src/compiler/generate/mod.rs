@@ -120,14 +120,17 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                         _ => panic!(),
                     };
 
+                    let event_identifier = format!("{}_{}", variable_name, event_name);
+                    code.variables.push(event_identifier.clone());
+
                     code.create.push(format!(
-                        "{}.addEventListener('{}', {});",
-                        variable_name, event_name, event_handler
+                        "{}.addEventListener('{}', {} = () => {{ {}(); lifecycle.update({:?} /* update all analysis changes first */) }});",
+                        variable_name, event_name, event_identifier, event_handler, analysis.will_change.clone().into_iter().collect::<Vec<String>>()
                     ));
 
                     code.destroy.push(format!(
                         "{}.removeEventListener('{}', {});",
-                        variable_name, event_name, event_handler
+                        variable_name, event_name, event_identifier
                     ));
                 } else {
                     let mut value = match &attr.value {
