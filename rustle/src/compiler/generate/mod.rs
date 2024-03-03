@@ -122,12 +122,12 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
 
                     code.create.push(format!(
                         "{}.addEventListener('{}', {});",
-                        parent, event_name, event_handler
+                        variable_name, event_name, event_handler
                     ));
 
                     code.destroy.push(format!(
                         "{}.removeEventListener('{}', {});",
-                        parent, event_name, event_handler
+                        variable_name, event_name, event_handler
                     ));
                 } else {
                     let mut value = match &attr.value {
@@ -159,18 +159,34 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                     }
                     code.create.push(format!(
                         "{}.{} = {};",
-                        parent, attr.name, value
+                        variable_name, attr.name, value
                     ));
 
                     if analysis.will_change.contains(&value) {
-                        code.update.push(format!(
-                            r#"
-                            if (changed.includes('{}')) {{
-                                {}.{} = {};
-                            }}
-                        "#,
-                            value, parent, attr.name, value
-                        ));
+                        match f.is_component {
+                            true => {
+                                code.update.push(format!(
+                                    r#"
+                                    const {}_changes = {{}};
+                                    if (changed.includes('{}')) {{
+                                        {}_changes.{} = {};
+                                    }}
+                                    variable_name.$set({}_changes);
+                                "#,
+                                    variable_name, value, variable_name, attr.name, value, variable_name
+                                ));
+                            },
+                            _ => {
+                                code.update.push(format!(
+                                    r#"
+                                    if (changed.includes('{}')) {{
+                                        {}.{} = {};
+                                    }}
+                                "#,
+                                    value, variable_name, attr.name, value
+                                ));
+                            }
+                        }
                     }
                 }
             }
