@@ -16,31 +16,37 @@ fn test_parsing(path: String) {
 }
 
 
+// in browser passed
 #[test]
 fn test_parsing_demo() { test_parsing("demo".to_owned()) }
 
 
+// in browser passed
 #[test]
 fn test_close_tag() { test_parsing("close-tag".to_owned()) }
 
 
+// in browser passed
 #[test]
 fn test_attribute() { test_parsing("attribute".to_owned()) }
 
 
+// in browser passed
 #[test]
 fn test_attribute_expr() { test_parsing("attribute_expr".to_owned()) }
 
 
+// in browser passed
 #[test]
 fn test_attribute_self() { test_parsing("attribute_self".to_owned()) }
 
 
-/// to fix
+// in browser passed
 #[test]
 fn test_attribute_template_string() { test_parsing("attribute_template_string".to_owned()) }
 
 
+// in browser passed
 #[test]
 fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 
