@@ -53,8 +53,17 @@ fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 #[test]
 fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
 
+// in browser passed
 #[test]
-fn test_parsing_nested() { test_parsing("nested".to_owned()) }
+fn test_parsing_nested() {
+    test_parsing("nested".to_owned());
+    let source = fs::read_to_string("tests/nested/Nested.rustle").unwrap();
+    let ast = Parser::new(&source).parse();
+    let analysis = analyse(&ast);
+    let generated = generate(ast, analysis);
+
+    fs::write("tests/nested/Nested.js", generated).unwrap();
+}
 
 #[test]
 fn test_tag_update() { test_parsing("tag_update".to_owned()) }

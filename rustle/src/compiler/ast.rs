@@ -4,6 +4,7 @@ use swc_html_ast::Text;
 
 #[derive(Serialize)]
 pub struct RustleAst {
+    pub import: String,
     pub script: Script,
     pub fragments: Vec<Fragment>,
 }
@@ -24,6 +25,7 @@ pub struct RustleElement {
 
 #[derive(Serialize)]
 pub enum Fragment {
+    Import(String),
     Script(Script),
     Element(RustleElement),
     Expression(Expr),

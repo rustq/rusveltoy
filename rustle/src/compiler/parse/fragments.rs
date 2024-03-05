@@ -41,6 +41,10 @@ pub fn parse_fragments<F: Fn(&mut Parser) -> bool>(
 /// # Arguments
 /// * `parser` - The `parser` struct containing the content to parse.
 pub fn parse_fragment(parser: &mut Parser) -> Option<Fragment> {
+    if let Some(str) = parse_import(parser) {
+        return Some(Fragment::Import(str));
+    }
+
     if let Some(script) = parse_script(parser) {
         return Some(Fragment::Script(script));
     }
@@ -55,6 +59,19 @@ pub fn parse_fragment(parser: &mut Parser) -> Option<Fragment> {
 
     if let Some(text) = parse_text(parser) {
         return Some(Fragment::Text(text));
+    }
+
+    None
+}
+
+fn parse_import(parser: &mut Parser) -> Option<String> {
+    if parser.match_str("import") {
+        let start_index = parser.index;
+        let end_index = parser.content.find("<script>").unwrap();
+        let code = parser.content.get(start_index..end_index).unwrap();
+        parser.index = end_index;
+
+        return Some(String::from(code));
     }
 
     None

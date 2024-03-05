@@ -44,6 +44,7 @@ pub fn analyse(ast: &RustleAst) -> AnalysisResult {
 fn traverse_fragment(fragment: &Fragment) -> Vec<String> {
     let mut will_use = Vec::new();
     match fragment {
+        Fragment::Import(_) => (),
         Fragment::Script(_) => (),
         Fragment::Element(f) => {
             for child in &f.fragments {

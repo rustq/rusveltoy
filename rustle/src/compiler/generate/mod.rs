@@ -52,6 +52,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
 
     format!(
         r#"
+	{}
 	export default function() {{
 		{}
 		{}
@@ -71,6 +72,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
 		return lifecycle;
 	}}
 	"#,
+        ast.import,
         script,
         code.variables
             .iter()
@@ -90,6 +92,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
 
 fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &mut Code) {
     match node {
+        Fragment::Import(_) => (),
         Fragment::Script(_) => (),
         Fragment::Element(f) => {
             let variable_name = format!("{}_{}", f.name, code.counter);
@@ -106,7 +109,8 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                 true => {
                     code.components.push((variable_name.clone(), f.name.clone()));
                     code.create.push(format!(
-                        "create_component({}.$$.fragment);",
+                        // "create_component({}.$$.fragment);",
+                        "{}.create(target);",
                         variable_name.clone()
                     ));
                 }
@@ -207,9 +211,9 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                 },
                 true => {
                     code.create
-                    .push(format!("mount_component({});", variable_name));
+                    .push(format!("// mount_component({});", variable_name));
                     code.destroy
-                    .push(format!("destroy_component({});", variable_name));
+                    .push(format!("{}.destroy(target);", variable_name));
 
                 }
             }

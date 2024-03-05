@@ -1,5 +1,5 @@
+import Nested from './Nested.js';
 <script>
-	const Nested = require('./Nested.rustle');
 </script>
 
 <Nested />

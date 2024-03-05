@@ -46,19 +46,30 @@ impl Parser {
         let script_index = fragments
             .iter()
             .position(|f| match f {
+                Fragment::Import(_) => true,
                 Fragment::Script(_) => true,
                 _ => false,
             })
             .unwrap();
 
-        let script = if let Fragment::Script(s) = fragments.remove(script_index) {
-            Some(s)
-        } else {
-            None
+        let f = fragments.remove(script_index);
+        match f {
+            Fragment::Import(s) => {
+                let script = if let Fragment::Script(s) = fragments.remove(script_index) {
+                    Some(s)
+                } else {
+                    None
+                }.unwrap();
+                return RustleAst { import: s, script, fragments }
+            }
+            Fragment::Script(script) => {
+                return RustleAst { import: "".to_owned(), script, fragments }
+            },
+            _ => {
+                todo!()
+            }
         }
-        .unwrap();
 
-        RustleAst { script, fragments }
     }
 
     /// Checks if the string at the current index
