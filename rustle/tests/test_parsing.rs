@@ -50,6 +50,7 @@ fn test_attribute_template_string() { test_parsing("attribute_template_string".t
 #[test]
 fn test_parsing_hello() { test_parsing("hello".to_owned()) }
 
+// in browser passed
 #[test]
 fn test_parsing_reactive_assignments() { test_parsing("reactive-assignments".to_owned()) }
 
@@ -65,6 +66,7 @@ fn test_parsing_nested() {
     fs::write("tests/nested/Nested.js", generated).unwrap();
 }
 
+// in browser passed
 #[test]
 fn test_tag_update() { test_parsing("tag_update".to_owned()) }
 

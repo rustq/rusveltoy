@@ -1,8 +1,8 @@
 <script>
-  let url = '/tutorial/image.gif';
+  let url = 10;
   const update_url = () => url--;
 </script>
 
-<button on:click={update_url} />
+<button on:click={update_url} >-</button>
 <div>{url}</div>
 <div x={url} />

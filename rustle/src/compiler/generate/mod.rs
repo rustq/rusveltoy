@@ -246,6 +246,19 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
 				"#,
                     expression_name, variable_name, expression_name
                 ));
+            } else {
+                for change in analysis.will_change.iter() {
+                    if expression_name.contains(change) {
+                        code.update.push(format!(
+                            r#"
+                            if (changed.includes('{}')) {{
+                                {}.data = {};
+                            }}
+                        "#,
+                            change, variable_name, expression_name
+                        ));
+                    }
+                }
             }
         }
         Fragment::Text(f) => {
