@@ -12,6 +12,7 @@ struct Code {
     components: Vec<(String, String)>,
     create: Vec<String>,
     update: Vec<String>,
+    props_set: Vec<String>,
     destroy: Vec<String>,
 }
 
@@ -22,6 +23,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
         components: Vec::new(),
         create: Vec::new(),
         update: Vec::new(),
+        props_set: Vec::new(),
         destroy: Vec::new(),
     };
 
@@ -65,6 +67,9 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
 			update(changed) {{
 				{}
 			}},
+			$set(changedSet) {{
+				{}
+			}},
 			destroy() {{
 				{}
 			}},
@@ -86,6 +91,7 @@ pub fn generate(ast: RustleAst, analysis: AnalysisResult) -> String {
             .join("\n"),
         code.create.join("\n"),
         code.update.join("\n"),
+        code.props_set.join("\n"),
         code.destroy.join("\n")
     )
 }
@@ -176,11 +182,11 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                                     r#"
                                     const {}_changes = {{}};
                                     if (changed.includes('{}')) {{
-                                        {}_changes.{} = {};
+                                        {}_changes['{}'] = {};
                                     }}
-                                    variable_name.$set({}_changes);
+                                    {}.$set({}_changes);
                                 "#,
-                                    variable_name, value, variable_name, attr.name, value, variable_name
+                                    variable_name, value, variable_name, attr.name, value, variable_name, variable_name
                                 ));
                             },
                             _ => {
@@ -246,6 +252,14 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
 				"#,
                     expression_name, variable_name, expression_name
                 ));
+                code.props_set.push(format!(
+                    r#"
+					if ('{}' in changedSet) {{
+						{}.data = changedSet['{}'];
+					}}
+				"#,
+                    expression_name, variable_name, expression_name
+                ));
             } else {
                 for change in analysis.will_change.iter() {
                     if expression_name.contains(change) {
@@ -256,6 +270,14 @@ fn traverse(node: &Fragment, parent: String, analysis: &AnalysisResult, code: &m
                             }}
                         "#,
                             change, variable_name, expression_name
+                        ));
+                        code.props_set.push(format!(
+                            r#"
+                            if ('{}' in changedSet) {{
+                                {}.data = changedSet['{}'];
+                            }}
+                        "#,
+                            expression_name, variable_name, expression_name
                         ));
                     }
                 }

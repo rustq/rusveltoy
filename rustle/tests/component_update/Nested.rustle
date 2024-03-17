@@ -1,5 +1,9 @@
 <script>
-	export let q;
+	let q=0;
+	const minus_q = () => q--;
 </script>
 
-<p>...don't affect this element {q}</p>
+<div>
+	<button on:click={minus_q}>-</button>
+	<p>...don't affect this element q={q}</p>
+</div>

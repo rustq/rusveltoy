@@ -70,5 +70,15 @@ fn test_parsing_nested() {
 #[test]
 fn test_tag_update() { test_parsing("tag_update".to_owned()) }
 
+// in browser passed
 #[test]
-fn test_component_update() { test_parsing("component_update".to_owned()) }
+fn test_component_update() {
+    test_parsing("component_update".to_owned());
+
+    let source = fs::read_to_string("tests/component_update/Nested.rustle").unwrap();
+    let ast = Parser::new(&source).parse();
+    let analysis = analyse(&ast);
+    let generated = generate(ast, analysis);
+
+    fs::write("tests/component_update/Nested.js", generated).unwrap();
+}

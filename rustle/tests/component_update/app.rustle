@@ -1,8 +1,9 @@
-<script>
-  let url = '/tutorial/image.gif';
-  const update_url = () => url--;
+import Nested from './Nested.js';
 
-	const Nested = require('./Nested.rustle');
+<script>
+	let out_q = 108;
+  const handleClick = () => out_q++
 </script>
 
-<Nested q={url} />
+<button on:click={handleClick}>+</button>
+<Nested q={out_q} />
